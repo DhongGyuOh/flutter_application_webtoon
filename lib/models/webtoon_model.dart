@@ -1,7 +1,7 @@
 class WebtoonModel {
   final String title, thumb, id;
   WebtoonModel.fromJson(Map<String, dynamic> json)
-      //named constructor(생성자)
+      //named constructor(생성자) 생성자에 이름(fromJson)을 정해주는 형식 Dart에만 있는 형식임
       : id = json['id'],
         title = json['title'],
         thumb = json['thumb'];
