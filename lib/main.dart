@@ -88,26 +88,60 @@ class HomeScreen extends StatelessWidget {
           //builder: Build할 context에 snapshot 이름을 정함
           if (futureResult.hasData) {
             //hasData: snapshot에 데이터가 있다면
-            return ListView.separated(
-              scrollDirection: Axis.horizontal,
-              //scrollDirection: 스크롤 방향을 정함
-              itemCount: futureResult.data!.length,
-              //itemCount: 총 data의 수를 넣어 주면됨
-              itemBuilder: (context, index) {
-                //itemBuilder: 입력된 context와 index를 통해 아이템을 생성함
-                var webtoon = futureResult.data![index];
-                //위에 if문에 futureResult.hasData를 타고 들어왔기 때문에 data!로 값에 Null이 존재하지않다는 명시를 해줌
-                return Text(webtoon.title);
-              },
-              separatorBuilder: (context, index) => const SizedBox(
-                //separatorBuilder: ListView의 item과 함께 사용될 위젯을 추가할 수 있음
-                width: 20,
-              ),
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(child: makeList(futureResult)),
+              ],
             );
           } else {
             return const Center(child: CircularProgressIndicator());
           }
         },
+      ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> futureResult) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      //scrollDirection: 스크롤 방향을 정함
+      itemCount: futureResult.data!.length,
+      //itemCount: 총 data의 수를 넣어 주면됨
+      itemBuilder: (context, index) {
+        //itemBuilder: 입력된 context와 index를 통해 아이템을 생성함
+        var webtoon = futureResult.data![index];
+        //위에 if문에 futureResult.hasData를 타고 들어왔기 때문에 data!로 값에 Null이 존재하지않다는 명시를 해줌
+        return Column(
+          children: [
+            Container(
+              width: 250,
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(50)),
+              child: Image.network(
+                //.network(URL을 사용하여 이미지를 가져옴)
+                webtoon.thumb,
+                headers: const {
+                  "User-Agent":
+                      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+                  // 따로 User-Agent 값을 추가하지 않으면 기본값으로 `Dart/<version> (dart:io)` 가 들어가서 네이버에서 차단함
+                  // 해결: headers에 useragent 추가 (https://api.flutter.dev/flutter/dart-io/HttpClient/userAgent.html)
+                },
+              ),
+            ),
+            Text(webtoon.title,
+                style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+          ],
+        );
+      },
+      separatorBuilder: (context, index) => const SizedBox(
+        //separatorBuilder: ListView의 item과 함께 사용될 위젯을 추가할 수 있음
+        width: 20,
       ),
     );
   }
