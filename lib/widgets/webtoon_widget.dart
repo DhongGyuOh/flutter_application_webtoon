@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_webtoon/screens/detail_screen.dart';
 
-class Webtoon extends StatelessWidget {
+class WebtoonListPage extends StatelessWidget {
   final String title, thumb, id;
 
-  const Webtoon(
+  const WebtoonListPage(
       {super.key, required this.title, required this.thumb, required this.id});
 
   @override
@@ -27,28 +27,32 @@ class Webtoon extends StatelessWidget {
 
       child: Column(
         children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            //clipBehavior: 자식의 부모영역 침범을 제어할수있게해줌
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            width: 250,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(90),
-                boxShadow: [
-                  BoxShadow(
-                      blurRadius: 20,
-                      offset: const Offset(10, 10),
-                      color: Colors.black.withOpacity(0.3))
-                ]),
-            child: Image.network(
-              //.network(URL을 사용하여 이미지를 가져옴)
-              thumb,
-              headers: const {
-                "User-Agent":
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                // 따로 User-Agent 값을 추가하지 않으면 기본값으로 `Dart/<version> (dart:io)` 가 들어가서 네이버에서 차단함
-                // 해결: headers에 useragent 추가 (https://api.flutter.dev/flutter/dart-io/HttpClient/userAgent.html)
-              },
+          Hero(
+            //Hero: tag에 유니크한 값을 갖는 변수를 넣어주면 Widget을 공유하여 화면 전환 할때 에니메이션 효과를 줄 수 있음
+            tag: id,
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              //clipBehavior: 자식의 부모영역 침범을 제어할수있게해줌
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              width: 250,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(90),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 20,
+                        offset: const Offset(10, 10),
+                        color: Colors.black.withOpacity(0.3))
+                  ]),
+              child: Image.network(
+                //.network(URL을 사용하여 이미지를 가져옴)
+                thumb,
+                headers: const {
+                  "User-Agent":
+                      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+                  // 따로 User-Agent 값을 추가하지 않으면 기본값으로 `Dart/<version> (dart:io)` 가 들어가서 네이버에서 차단함
+                  // 해결: headers에 useragent 추가 (https://api.flutter.dev/flutter/dart-io/HttpClient/userAgent.html)
+                },
+              ),
             ),
           ),
           const SizedBox(

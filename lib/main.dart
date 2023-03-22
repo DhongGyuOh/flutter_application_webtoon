@@ -115,7 +115,7 @@ class HomeScreen extends StatelessWidget {
         //itemBuilder: 입력된 context와 index를 통해 아이템을 생성함
         var webtoon = futureResult.data![index];
         //위에 if문에 futureResult.hasData를 타고 들어왔기 때문에 data!로 값에 Null이 존재하지않다는 명시를 해줌
-        return Webtoon(
+        return WebtoonListPage(
             title: webtoon.title, thumb: webtoon.thumb, id: webtoon.id);
       },
       separatorBuilder: (context, index) => const SizedBox(
