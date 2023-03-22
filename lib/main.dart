@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    //initState: 앱이 시작할때 동작(생명주기)
     super.initState();
     waitForwebToons();
   }
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> {
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-  Future<List<WebtoonModel>> webtoons = ApiService.getTodayToons();
+  final Future<List<WebtoonModel>> webtoons = ApiService.getTodayToons();
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +84,28 @@ class HomeScreen extends StatelessWidget {
       )),
       body: FutureBuilder(
         future: webtoons,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return const Text('Complete');
+        builder: (context, futureResult) {
+          //builder: Build할 context에 snapshot 이름을 정함
+          if (futureResult.hasData) {
+            //hasData: snapshot에 데이터가 있다면
+            return ListView.separated(
+              scrollDirection: Axis.horizontal,
+              //scrollDirection: 스크롤 방향을 정함
+              itemCount: futureResult.data!.length,
+              //itemCount: 총 data의 수를 넣어 주면됨
+              itemBuilder: (context, index) {
+                //itemBuilder: 입력된 context와 index를 통해 아이템을 생성함
+                var webtoon = futureResult.data![index];
+                //위에 if문에 futureResult.hasData를 타고 들어왔기 때문에 data!로 값에 Null이 존재하지않다는 명시를 해줌
+                return Text(webtoon.title);
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                //separatorBuilder: ListView의 item과 함께 사용될 위젯을 추가할 수 있음
+                width: 20,
+              ),
+            );
           } else {
-            return const Text('Loading...');
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
