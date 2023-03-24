@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_webtoon/models/webtoon_detail_model.dart';
 import 'package:flutter_application_webtoon/models/webtoon_episode_model.dart';
 import 'package:flutter_application_webtoon/services/api_service.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/episode_widget.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -16,14 +16,47 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  late final Future<List<WebtoonEpisodeModel>> webToonEpisode;
-  late final Future<WebtoonDetailModel> webToonDetail;
+  late Future<List<WebtoonEpisodeModel>> webToonEpisode;
+  late Future<WebtoonDetailModel> webToonDetail;
   //final Future<WebtoonDetailModel> webtoonDetail = ApiService.getToonById(widget.id); 이 안되는 이유는
   //constructor에서 extends로 상속받은 wiget(부모)이 참조될 수 없기 때문 그래서 initState에서 widget을 사용해서 받아와야함
+
+  bool isLiked = false;
+  late SharedPreferences preferences;
+  Future initPreferences() async {
+    preferences = await SharedPreferences.getInstance();
+    final likedToons = preferences.getStringList('likedToons');
+    if (likedToons != null) {
+      if (likedToons.contains(widget.id) == true) {
+        isLiked = true;
+        setState(() {});
+      }
+    } else {
+      preferences.setStringList('likedToons', []);
+      setState(() {});
+    }
+  }
+
+  void onClickLike() async {
+    final likedToons = preferences.getStringList('likedToons');
+    if (likedToons != null) {
+      if (isLiked) {
+        likedToons.remove(widget.id);
+      } else {
+        likedToons.add(widget.id);
+      }
+      await preferences.setStringList('likedToons', likedToons);
+      setState(() {
+        isLiked = !isLiked;
+      });
+    }
+  }
+
   @override
   void initState() {
     webToonDetail = ApiService.getToonById(widget.id);
     webToonEpisode = ApiService.getEpisodeId(widget.id);
+    initPreferences();
     super.initState();
   }
 
@@ -31,6 +64,11 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border),
+              onPressed: () => onClickLike())
+        ],
         title: Text(
           widget.title,
           //title이 아닌 widget.title을 써야하는 이유는 Stateful이기때문에 부모 class에 가서 값을 받아야하기 때문
@@ -101,7 +139,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   return SizedBox(
                     height: 500,
                     child: ListView.separated(
-                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 400, top: 20),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemCount: snapshot.data!.length,
@@ -120,7 +159,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       },
                       separatorBuilder: (context, index) {
                         return const SizedBox(
-                          height: 5,
+                          height: 10,
                         );
                       },
                     ),
