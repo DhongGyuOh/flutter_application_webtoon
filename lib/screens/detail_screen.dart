@@ -3,6 +3,8 @@ import 'package:flutter_application_webtoon/models/webtoon_detail_model.dart';
 import 'package:flutter_application_webtoon/models/webtoon_episode_model.dart';
 import 'package:flutter_application_webtoon/services/api_service.dart';
 
+import '../widgets/episode_widget.dart';
+
 class DetailScreen extends StatefulWidget {
   final String title, thumb, id;
 
@@ -109,36 +111,9 @@ class _DetailScreenState extends State<DetailScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: const BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(15, 15))),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Icon(
-                                    Icons.access_alarm,
-                                    size: 15,
-                                    color: Colors.indigoAccent.shade700,
-                                  ),
-                                  Text('${episode.date}/'),
-                                  Icon(
-                                    Icons.rate_review_outlined,
-                                    size: 15,
-                                    color: Colors.indigoAccent.shade700,
-                                  ),
-                                  Text('${episode.rating}/'),
-                                  Icon(
-                                    Icons.open_in_new_rounded,
-                                    size: 15,
-                                    color: Colors.indigoAccent.shade700,
-                                  ),
-                                  Text('${episode.title} '),
-                                ],
-                              ),
+                            Episode(
+                              episode: episode,
+                              webtoonId: widget.id,
                             )
                           ],
                         );
